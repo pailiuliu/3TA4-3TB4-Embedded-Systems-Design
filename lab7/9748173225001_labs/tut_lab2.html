@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+<title>tut_lab2</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="GENERATOR" content="hevea 1.10">
+<style type="text/css">
+.li-itemize{margin:1ex 0ex;}
+.li-enumerate{margin:1ex 0ex;}
+.dd-description{margin:0ex 0ex 1ex 4ex;}
+.dt-description{margin:0ex;}
+.toc{list-style:none;}
+.thefootnotes{text-align:left;margin:0ex;}
+.dt-thefootnotes{margin:0em;}
+.dd-thefootnotes{margin:0em 0em 0em 2em;}
+.footnoterule{margin:1em auto 1em 0px;width:50%;}
+.caption{padding-left:2ex; padding-right:2ex; margin-left:auto; margin-right:auto}
+.title{margin:2ex auto;text-align:center}
+.center{text-align:center;margin-left:auto;margin-right:auto;}
+.flushleft{text-align:left;margin-left:0ex;margin-right:auto;}
+.flushright{text-align:right;margin-left:auto;margin-right:0ex;}
+DIV TABLE{margin-left:inherit;margin-right:inherit;}
+PRE{text-align:left;margin-left:0ex;margin-right:auto;}
+BLOCKQUOTE{margin-left:4ex;margin-right:4ex;text-align:left;}
+TD P{margin:0px;}
+.boxed{border:1px solid black}
+.textboxed{border:1px solid black}
+.vbar{border:none;width:2px;background-color:black;}
+.hbar{border:none;height:2px;width:100%;background-color:black;}
+.hfill{border:none;height:1px;width:200%;background-color:black;}
+.vdisplay{border-collapse:separate;border-spacing:2px;width:auto; empty-cells:show; border:2px solid red;}
+.vdcell{white-space:nowrap;padding:0px;width:auto; border:2px solid green;}
+.display{border-collapse:separate;border-spacing:2px;width:auto; border:none;}
+.dcell{white-space:nowrap;padding:0px;width:auto; border:none;}
+.dcenter{margin:0ex auto;}
+.vdcenter{border:solid #FF8000 2px; margin:0ex auto;}
+.minipage{text-align:left; margin-left:0em; margin-right:auto;}
+.marginpar{border:solid thin black; width:20%; text-align:left;}
+.marginparleft{float:left; margin-left:0ex; margin-right:1ex;}
+.marginparright{float:right; margin-left:1ex; margin-right:0ex;}
+.theorem{text-align:left;margin:1ex auto 1ex 0ex;}
+.part{margin:2ex auto;text-align:center}
+.lstlisting{font-family:monospace;white-space:pre;margin-right:auto;margin-left:0pt;text-align:left}
+</style>
+</head>
+<body >
+<p></p>
+<!--HEVEA command line is: hevea lab2 -->
+<p></p>
+<!--CUT DEF section 1 -->
+<div class="center"><b><span style="font-size: 18pt;">Mechtron 3TB4: Embedded Systems Design II<br /> Tutorial Lab&nbsp;2</span></b><br /> <b>Building
+ a Hardware Interface using an FPGA</b><br /> Reports Due:<br /> At the start of your lab sessions next week (along with the pre-lab report for the lab)
+ <br /> </div>
+<p><b>Goals:</b></p>
+<ul class="itemize">
+<li class="li-itemize">Introduction to Quartus&nbsp;II Software and how to use different facilities provided by it</li>
+<li class="li-itemize">To learn how to describe simple circuitry in Verilog HDL</li>
+</ul>
+<p>Note: <b>The following documents may help you with your lab. Please go over them at your own convenient time, in addition to the class notes:</b></p>
+<ul class="itemize">
+<li class="li-itemize">Introduction to the software<br /> Go to ALTERA&rsquo;s web site at:<br /> <a href="http://www.altera.com/products/software/flows/fpga/flo-fpga.html"><tt>http://www.altera.com/products/software/flows/fpga/flo-fpga.html</tt></a><br /> There are a number of documents including a video presentation. The following document gives a good introductory information: &nbsp; <a href="http://www.altera.com/literature/manual/intro_to_quartus2.pdf" target="_blank">http://www.altera.com/literature/manual/intro_to_quartus2.pdf</a></li>
+<li class="li-itemize">After you install the free edition of the software (see "Activities" below) you may find an on-line tutorial under "Help".</li>
+<li class="li-itemize">You may also wish to consult&nbsp;http://www.asic-world.com/verilog/index.html for lessons and references on Verilog HDL</li>
+</ul>
+<p><b>Lab Equipment and Software:</b><br /> In this tutorial you will be introduced to the new development board that we will use for future labs. 
+Altera&rsquo;s Development and Education (DE2) board is built around an FPGA device, which can be programmed to implement an arbitrary logic circuit. 
+The FPGA is connected to many on-board peripherals, as shown in figure 1 <a href="#lab2f1">Altera DE2 Board</a>. Elements encircled in the figure will 
+be used in this tutorial and lab2.</p>
+<blockquote class="figure">
+<div class="center">
+<div class="center"><hr size="2" width="80%" /></div>
+<img src="../figures/DE2.png" />
+<div class="caption">
+<table cellpadding="0" cellspacing="6">
+<tbody>
+<tr>
+<td align="left" valign="top">Figure 1: Altera&rsquo;s DE2 Board</td>
+</tr>
+</tbody>
+</table>
+</div>
+<a name="lab2f1"></a>
+<div class="center"><hr size="2" width="80%" /></div>
+</div>
+</blockquote>
+<dl class="description"><dt class="dt-description"><b>Peripheral connections</b></dt><dd class="dd-description">&nbsp;This device contains
+ many peripherals that can be used with the FPGA. &nbsp;The&nbsp;<a href="../figures/DE2_pin_assignments.csv">DE2_pin_assignments.csv</a>&nbsp;provides 
+ a pin-map to connect the FPGA's output ports to the surrounding peripherals. &nbsp;For this lab, you will be required to use the DE2 pin assignments 
+ to interface with the peripherals of the DE2 development board.
+ 
+ &nbsp;</dd><dt class="dt-description"><b>Cyclone II FPGA</b></dt><dd class="dd-description">will be 
+ used to implement the hardware logic. Note that device support for the Cyclone II was dropped as of release 13.1 of 
+ the Quartus II free web edition.</dd><dt class="dt-description">
+<!-- 
+ <b>Seven-segment Displays</b></dt><dd class="dd-description">Four of the 
+ eight 7-segment displays will be used to display the stopwatch (to be implemented in this lab) time.</dd><dt class="dt-description">
+ 
+ <b>Toggle 
+ Switches</b></dt><dd class="dd-description">One of the 18 toggle switches will be used to start/stop the 
+ stopwatch.</dd><dt class="dt-description">
+ -->
+ <b>Software environment</b></dt><dd class="dd-description">consists of &nbsp;the 
+ Quartus II CAD Tool.<br /> As a part of the preparation, you will complete a tutorial that will introduce you to the Quartus II user 
+ interface.</dd>
+ 
+
+
+<!--TOC section Activities-->
+<h2 class="section"><!--SEC ANCHOR -->Activities</h2>
+<!--SEC END --><!--TOC subsection Pre-lab [30]-->
+<h3 class="subsection"><!--SEC ANCHOR -->Pre-tutorial</h3>
+<!--SEC END -->
+<p>The following activities must be completed by each student <b>independently</b> at your convenient time before attending this tutorial.</p>
+<ol class="enumerate" type="1">
+<li class="li-enumerate">Install the free web edition of Quartus&nbsp;II software on your home computer by downloading it from Altera&rsquo;s Web site:<br /> <a href="https://www.altera.com/downloads/download-center.html"><tt>https://www.altera.com/downloads/download-center.html</tt></a></li>
+<li> <b> Make sure you download version 13.0 to match the software installed in the lab.</b>
+<li class="li-enumerate">Complete sections 1 through 6 of the <a href="../ref/Quartus_II_Introduction.pdf">Quartus II Introduction Using 
+Verilog Design</a> tutorial available on course web page. You do not have to complete sections 7, 8 and 9 because you do not have the DE2 board at home.</li>
+</ol>
+
+<!--TOC subsection In the Lab [50]-->
+<h3 class="subsection"><!--SEC ANCHOR -->In the Lab:</h3>
+<!--SEC END -->
+<p>In the lab you need to work in groups. Using one of the computers in the lab, create a new Quartus project, as you learned in the &ldquo;Quartus II Introduction Using Verilog Design" tutorial.</p>
+<ol class="enumerate" type="1">
+<li class="li-enumerate">Connect the DE2 board to its power supply.</li>
+<li class="li-enumerate"> Follow section 7 of the tutorial for pin assignment. Alternately, you can import pin assignments from 
+the <a href="../figures/DE2_pin_assignments.csv">DE2_pin_assignments.csv</a> file provided on 
+course web page. <b>Before compiling, make sure that all unused pins are reserved as Inputs tri stated</b>. This option is available 
+under Assignments-&gt;Device-&gt;Device and Pin Options-&gt;Unused Pins. </li>
+<li class="li-enumerate">Complete sections 8 and 9 of the &ldquo;Quartus II Introduction Using Verilog Design" tutorial that you used in  
+preparation for this tutorial. </li>
+<li class="li-enumerate"> Show the compiled circuit to one of the TA's and take a screen shot for including in your report.
+
+<li class="li-enumerate">Use both the functional simulation as well as timing simulation to ensure the intended functions of the circuit.</li>
+<li class="li-enumerate">Show the result of simulation to one of the TAs and take screen shots for your report.</li>
+
+</ol><!--TOC subsection Lab Report (Part&#XA0;2)[20]-->
+<h3 class="subsection"><!--SEC ANCHOR -->Report:</h3>
+<!--SEC END -->
+<p> Describe what you did in this tutorial and include the screen shots taken during various experiments along with the pre-lab report as described
+ in lab2 document at the start of lab2 next week.</p>
+
+<!--HTMLFOOT-->
+<p></p>
+<!--ENDHTML-->
+<p></p>
+</body>
+</html>

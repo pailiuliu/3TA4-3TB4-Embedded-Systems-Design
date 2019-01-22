@@ -1,0 +1,299 @@
+ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+<title>lab2</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="GENERATOR" content="hevea 1.10">
+<style type="text/css">
+.li-itemize{margin:1ex 0ex;}
+.li-enumerate{margin:1ex 0ex;}
+.dd-description{margin:0ex 0ex 1ex 4ex;}
+.dt-description{margin:0ex;}
+.toc{list-style:none;}
+.thefootnotes{text-align:left;margin:0ex;}
+.dt-thefootnotes{margin:0em;}
+.dd-thefootnotes{margin:0em 0em 0em 2em;}
+.footnoterule{margin:1em auto 1em 0px;width:50%;}
+.caption{padding-left:2ex; padding-right:2ex; margin-left:auto; margin-right:auto}
+.title{margin:2ex auto;text-align:center}
+.center{text-align:center;margin-left:auto;margin-right:auto;}
+.flushleft{text-align:left;margin-left:0ex;margin-right:auto;}
+.flushright{text-align:right;margin-left:auto;margin-right:0ex;}
+DIV TABLE{margin-left:inherit;margin-right:inherit;}
+PRE{text-align:left;margin-left:0ex;margin-right:auto;}
+BLOCKQUOTE{margin-left:4ex;margin-right:4ex;text-align:left;}
+TD P{margin:0px;}
+.boxed{border:1px solid black}
+.textboxed{border:1px solid black}
+.vbar{border:none;width:2px;background-color:black;}
+.hbar{border:none;height:2px;width:100%;background-color:black;}
+.hfill{border:none;height:1px;width:200%;background-color:black;}
+.vdisplay{border-collapse:separate;border-spacing:2px;width:auto; empty-cells:show; border:2px solid red;}
+.vdcell{white-space:nowrap;padding:0px;width:auto; border:2px solid green;}
+.display{border-collapse:separate;border-spacing:2px;width:auto; border:none;}
+.dcell{white-space:nowrap;padding:0px;width:auto; border:none;}
+.dcenter{margin:0ex auto;}
+.vdcenter{border:solid #FF8000 2px; margin:0ex auto;}
+.minipage{text-align:left; margin-left:0em; margin-right:auto;}
+.marginpar{border:solid thin black; width:20%; text-align:left;}
+.marginparleft{float:left; margin-left:0ex; margin-right:1ex;}
+.marginparright{float:right; margin-left:1ex; margin-right:0ex;}
+.theorem{text-align:left;margin:1ex auto 1ex 0ex;}
+.part{margin:2ex auto;text-align:center}
+.lstlisting{font-family:monospace;white-space:pre;margin-right:auto;margin-left:0pt;text-align:left}
+</style>
+</head>
+<body >
+<p></p>
+<!--This lab was re-written by Dr Asghar Bokhari during summer 2015 to better organize the material in tutorial and lab and to draw attention to the material that may be required for subsequent labs. -->
+<p></p>
+<!--CUT DEF section 1 -->
+<div class="center"><b><span style="font-size: 18pt;">Mechtron 3TB4: Embedded Systems Design II<br /> Lab&nbsp;2</span></b><br /> <b>Building a Hardware Interface using an FPGA</b><br /> Reports Due:<br /> Prelab:&nbsp;At the start of your lab session.<br /> Post-lab:&nbsp;At the start of your next tutorial session.</div>
+<p><b>Goals:</b></p>
+<ul class="itemize">
+<li class="li-itemize">Introduction to Quartus&nbsp;II Software and how to use different facilities provided by it</li>
+<li class="li-itemize">To learn how to describe simple circuitry in Verilog HDL</li>
+<li class="li-itemize">To learn how to use an FPGA to implement a simple interface</li>
+
+</ul>
+<p>Note: This lab consists of three activities. Marks allocated to each are indicated in square brackets. <b>The following documents may help you with your lab. Please go over them at your own convenient time, in addition
+ to the class notes:</b></p>
+<ul class="itemize">
+<li class="li-itemize">Introduction to the software<br /> Go to ALTERA&rsquo;s web site at:<br /> <a href="http://www.altera.com/products/software/flows/fpga/flo-fpga.html"><tt>http://www.altera.com/products/software/flows/fpga/flo-fpga.html</tt></a><br /> There are a number of documents including a video presentation. The following document gives a good introductory information: &nbsp; <a href="http://www.altera.com/literature/manual/intro_to_quartus2.pdf" target="_blank">http://www.altera.com/literature/manual/intro_to_quartus2.pdf</a></li>
+<li class="li-itemize">After you install the free edition of the software you may find an on-line tutorial under "Help".</li>
+<li class="li-itemize"> A tutorial from Altera on <a href="../ref/Quartus_II_Introduction.pdf">debugging_hardware</a> is very useful for completion of this lab and you are encouraged to go over it before coming to the lab.</li>
+</ul>
+
+<dt class="dt-description"><b>System Description</b></dt><dd class="dd-description">In this lab you will create a circuit that implements 
+a stopwatch. The time will be displayed on the 7-segment displays on the DE2 board. To achieve this, you will design a clock divider, a counter, 
+a Hexidecimal to binary-coded decimal translator, a seven-segment display handler, and a top-level module interfacing the submodules &nbsp;You 
+will describe this interface in Verilog Hardware Description Language (HDL) and implement it on the FPGA on DE2 board. This lab requires knowledge
+ of basic Verilog.<br />The system we are building is shown in Figure 4. The system consists of a clock signal divider, a counter, a hex to BCD 
+ converter, and several Seven-segment display handlers. &nbsp;This diagram is meant to be a guide only. &nbsp;
+<blockquote class="figure">
+<div class="center">
+<div class="center"><hr size="2" width="80%" /></div>
+<img src="../figures/lab2_systemblock1.jpg" alt="lab2_block" title="lab2_block" /><br /> 
+<div class="caption">
+<table cellpadding="0" cellspacing="6">
+<tbody>
+<tr>
+<td align="left" valign="top">Figure 1: System Block Diagram</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- <a name="lab2f4"></a>
+<div class="center"><hr size="2" width="80%" /></div> -->
+</div>
+</blockquote>
+<p>The clock divider slows down the 50 MHz oscillator crystal, and generates an output signal every millisecond. &nbsp;This signal enables the counting 
+for the counter. &nbsp;The current count from the counter module is fed into the hex-to-BCD converter. &nbsp;Once the count is translated to
+ a decimal value, it is fed into the seven-segment display handler to output the count on the seven-segment display on the DE2 board.</p>
+</dd></dl><!--TOC section Activities-->
+
+
+
+
+    
+    <dt class="dt-description"><b>Clock Divider</b></dt><dt class="dt-description" style="padding-left: 30px;">The
+     clock divider is a special circuit that can limit the rate of an oscillator clock's signal. &nbsp;The DE2 board carries a 50 MHz clock 
+     that you will be using. &nbsp;However, this is too fast for the application. &nbsp;In order to slow down the oscillator, you will use a 
+     counter. When the count register reaches a certain value, the count register will reset to zero.</dt>
+     
+    
+     <dt class="dt-description"><b>Details of 7-Segment Displays</b></dt><dd class="dd-description"> 7-segment 
+     displays are some of the most ubiquitous display devices in use today. In their basic form, they are used to display decimal numbers. 
+     Each display consists of 7 segments (hence the name). Each segment is an LED that can be turned on or off to display various patterns. 
+     Each segment is controlled independently, although they work together to display a pattern. Segments are numbered from a to g or 0 to 6 
+     as shown in Figure 2. The figure also shows how the 16 hexadecimal digits can be represented using a 7-segment display. <b>Please note 
+     that to make a segment on the DE2 board light up, logic 0 has to be applied to its input</b>. For example, to display number 1 on a 
+     7-segment display, one should apply logic 0 to segments 1 and 2, and logic 1 to all other segments.
+<blockquote class="figure">
+<div class="center">
+<div class="center"><hr size="2" width="80%" /></div>
+<img src="../figures/lab2f3.png" />
+<div class="caption">
+<table cellpadding="0" cellspacing="6">
+<tbody>
+<tr>
+<td align="left" valign="top">Figure 2: Seven-segment Display</td>
+</tr>
+</tbody>
+</table>
+</div>
+<a name="lab2f3"></a>
+<div class="center"><hr size="2" width="80%" /></div>
+</div>
+</blockquote>
+<p>As you already know, all hexadecimal digits can be encoded using 4 bits. If we have a 4-bit number stored somewhere 
+in the system, and we wish to display it on a 7-segment display, we need a code converter circuit that will drive each of the 7 segments based 
+on the 4-bit value. Such a circuit has one 4-bit input, and 7 outputs, corresponding to segments 0 through 6, and is sometimes referred to as 
+a 7-segment decoder.</p>
+</dd>
+<h2 class="section"><!--SEC ANCHOR -->Activities</h2>
+<!--SEC END --><!--TOC subsection Pre-lab [30]-->
+<h3 class="subsection"><!--SEC ANCHOR -->Pre-lab [30]</h3>
+<!--SEC END -->
+<p>The following activities must be completed by each student <b>independently</b> and submitted as part&nbsp;1 of the lab report (the prelab) at the start of your lab sessions. [Item 1 worth 
+ 9 marks other items 3 marks each]</p>
+<ol class="enumerate" type="1">
+<li class="li-enumerate"> Submit your report related to the tutorial for lab2 as described in the relevent document.</li>
+<li class="li-enumerate">Write a truth table for the 7-segment decoder, which will provide the following functionality:
+<ul class="itemize">
+<li class="li-itemize">The decoder has a 4-bit input and a 7-bit output.</li>
+<li class="li-itemize">For the first 10 binary combinations of the input (0000 to 1001), the decoder should provide signals to display decimal digits 0 to 9 on the 7-segment display, as shown in Figure 3.</li>
+<li class="li-itemize">For the remaining binary combinations (1010 to 1111), the decoder should produce signals to display first 6 letters of your first name. If your first name is shorter than 6 letters, add more letters from your last name. Keep in mind that you need to drive logic 0 to turn a segment on. As discussed in class, it may not be possible to display some letters in a meaningful way on the 7-segment display, you should use approximations if you require a letter that cannot be displayed on the 7-segment display easily.</li>
+</ul>
+You should, produce the complete truth table corresponding to the numbers and your name, as specified above.</li>
+
+<li class="li-enumerate">Using either K-maps or algebraic manipulation, derive logic expressions for segments 0 and 1 in the truth table you created in step 3. Note that the logic expressions need not be minimal.</li>
+<li class="li-enumerate">Create a top level module that takes the 50MH clock and three of the 4 keys of the DE2 board as input and outputs 
+signals to eight of the 7 digit displays of DE2 board. KEY[0] is used for the reset signal, KEY[1] for the "start" signal and KEY[2] as the "stop" signal. Also note
+that pressing any of these keys results in a logic low signal and you may like to use an inverter if you want logic high signal when a key is pressed. Use top level file declaration:<br /><span style="font-family: 'courier new', courier;">module lab2 (input CLOCK_50, 
+input [2:0] KEY, output wire [6:0] HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, HEX7)</span></li>
+
+<p style="padding-left: 30px;"><span face="courier new, courier" style="font-family: 'courier new', courier;">&nbsp;/* fill your code and instantiate other modules here */</span></p>
+<p style="padding-left: 30px;"><span face="courier new, courier" style="font-family: 'courier new', courier;">&nbsp;endmodule</span></p>
+
+<li class="li-enumerate">Write Verilog code to implements a flip-flop that takes a "start" signal when KEY[1] is pressed and latches the output so that it
+retains the signal even when the KEY[1] is released. &nbsp;
+Use the following skeleton code for your module:
+<div class="lstlisting">module control_ff (Clock, ff_in, Set, Clear, Q);
+input Clock, ff_in,Set, Clear;
+output reg Q;
+<br />&nbsp;</div>
+
+<li class="li-enumerate">Write Verilog code that describes the clock divider circuit. &nbsp;Refer to the previous section for the clock divider. &nbsp;
+Use the following skeleton code for your module:
+<div class="lstlisting">module clock_divider (Clock, Reset, Pulse_ms);
+input Clock, Reset;
+output reg Pulse_ms;<br />&nbsp;</div>
+<div class="lstlisting">/* fill in your code here */</div>
+<div class="lstlisting"></div>
+<div class="lstlisting">endmodule</div>
+</li>
+<li class="li-enumerate">Write verilog counter logic to reset the counter, to stop the counter without resetting the current value, and to resume the counting when paused.</li>
+<div class="lstlisting">module hex_counter(Clock, Reset, Enable, Stp, Q);
+input Clock, Reset, Enable, Stp;
+output [31:0] Q;
+reg[31:0] Q;
+/* Your code */
+endmodule
+</div>
+<li class="li-enumerate">Describe a circuit that implements a hexidecimal to Binary-coded decimal converter in Verilog. Use the following skeleton code for your module:
+<div class="lstlisting">module hex_to_bcd_converter(input wire clk, Reset, input wire [31:0] hex_number, output reg [3:0] bcd_digit_0,bcd_digit_1,bcd_digit_2,bcd_digit_3,bcd_digit_4, </div>
+<div class="lstlisting">bcd_digit_5, bcd_digit_6, bcd_digit_7) ;<br /><br />/* fill in your code here */&nbsp;</div>
+<div class="lstlisting"><br />endmodule</div>
+</li>
+
+<li class="li-enumerate">Describe in Verilog a circuit that implements the truth table created by you in item 2 above for display of decimal digits only.
+ Use ``<i>assign</i>" statements to specify the functionality of segments 0 and 1, and behavioral description to specify functionality of other blocks. Use the following skeleton code for your module:
+
+<div class="lstlisting">module seven_seg_decoder (input [3:0] x, output[6:0] hex_LEDs);<br />reg [6:2] top_5_segments;<br /><br />assign hex_LEDs[0] = /* Insert expression for segment 0 here */;<br />assign hex_LEDs[1] = /* Insert expression for segment 1 here */;<br />assign hex_LEDs[6:2] = top_5_segments[6:2];<br /><br />/* Use an always block to specify functionality<br /> for the top 5 segments here */<br /><br />endmodule</div>
+</li>
+
+</ol>
+<!--TOC subsection In the Lab [50]-->
+<h3 class="subsection"><!--SEC ANCHOR -->In the Lab [50]</h3>
+<!--SEC END -->
+<p>You will have different solutions from your pre-lab (pre-labs should be completed individually). In the lab you need to demonstrate only one working program/circuit per group.</p>
+<ol class="enumerate" type="1">
+<li class="li-enumerate">Create a new Quartus project, as you learned in the &ldquo;Quartus II Introduction Using Verilog Design" tutorial. Name this project "lab2". Use your code from pre-lab to
+ create a top-level module named lab2 that binds all components together.
+Write code for all other modules based on your code from the pre-lab. 
+Import pin assignments 
+from the <a href="../figures/DE2_pin_assignments.csv">DE2_pin_assignments.csv</a> file provided on course web page. 
+<b>Before compiling, make sure that all unused pins are reserved as Inputs tri stated</b>. This option is available under Assignments-&gt;Device-&gt;Device and Pin Options-&gt;Unused Pins. 
+Compile your design and debug your code if necessary.</li>
+<li class="li-enumerate"><b>RTL Views: </b> Use Net List Viewers to look at different RTL views of the circuit designed by you. Take screen shots and include them in your report.[10 marks]</li>
+<li class="li-enumerate"><b>Pin Assignments:</b> Use Assignments ->Pin Planner to confirm that pins have been correctly assigned. Take a screen shot and include it in your report.[10 marks]</li>
+
+<li class="li-enumerate"><b>Simulation: </b> The correct behaviour of a circuit can be checked using functional and timing simulations. However, a complete simulation of your circuit would require a large 
+number of clock cycles, making it difficult to
+produce an informative display. You can perform a meaningful simulation by scaling down some of the parameters. For example, the clock divider circuit can be modified such that it gives out a pulse every ten cycles of the 
+input clock (instead of every milli second required by stop watch application that will give out a pulse every 50000 cycles). Example waveforms and output for both the functional as well as timing simulation are shown in figures below.
+You are not required to produce diagrams that match those shown here and you can use your own design to produce figures similar to these. Take a screen shot of the figures used/produced by you. Do not forget to use "/*synthesis keep*/"
+directive where necessary.[10 marks]</li>
+
+<blockquote class="figure">
+<div class="center">
+<div class="center"><hr size="2" width="80%" /></div>
+<img src="../figures/lab2_simulation.jpg" alt="lab2_sim" title="lab2_sim" /><br /> 
+<div class="caption">
+<table cellpadding="0" cellspacing="6">
+<tbody>
+<tr>
+<td align="left" valign="top">Figure 3: Waveforms for simulation</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- <a name="lab2f4"></a>
+<div class="center"><hr size="2" width="80%" /></div> -->
+</div>
+</blockquote>
+
+<blockquote class="figure">
+<div class="center">
+<div class="center"><hr size="2" width="80%" /></div>
+<img src="../figures/lab2_functional.jpg" alt="lab2_fun" title="lab2_fun" /><br /> 
+<div class="caption">
+<table cellpadding="0" cellspacing="6">
+<tbody>
+<tr>
+<td align="left" valign="top">Figure 4: Result of functional simulation</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- <a name="lab2f4"></a>
+<div class="center"><hr size="2" width="80%" /></div> -->
+</div>
+</blockquote>
+
+<blockquote class="figure">
+<div class="center">
+<div class="center"><hr size="2" width="80%" /></div>
+<img src="../figures/lab2_timing.jpg" alt="lab2_tim" title="lab2_tim" /><br /> 
+<div class="caption">
+<table cellpadding="0" cellspacing="6">
+<tbody>
+<tr>
+<td align="left" valign="top">Figure 5: Result of timing simulation</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- <a name="lab2f4"></a>
+<div class="center"><hr size="2" width="80%" /></div> -->
+</div>
+</blockquote>
+<li class="li-enumerate">Note the difference in the out puts for "KEY[1]" and "start" signals on functional and timing simulations. 
+Such differences do exist for other signals also but are not noticeable due to granularity of scale.</li>
+<li class="li-enumerate">Download your design to the FPGA and test the behaviour of your circuit and demonstrate its operation to one of the TAs.[20 marks]</li>
+</ol><!--TOC subsection Lab Report (Part&#XA0;2)[20]-->
+<h3 class="subsection"><!--SEC ANCHOR -->Lab Report (Part&nbsp;2)[20]</h3>
+<!--SEC END -->
+<p>This part of the lab will test your presentation and report writing skills. Describe what you did in this lab, include the code used as well as screen shots taken and answer the following questions:</p>
+<ol class="enumerate" type="1">
+<li class="li-enumerate">In 2-3 sentences explain the role of the ``<i>DE</i>2_<i>pin</i>_<i>assignments</i>.<i>csv</i>" file that you imported into your design.</li>
+<li class="li-enumerate">Open the compilation report in Quartus, and report the following numbers:
+<ul class="itemize">
+<li class="li-itemize">Total number of logic elements used by your circuit.</li>
+<li class="li-itemize">Total number of registers.</li>
+<li class="li-itemize">Total number of pins.</li>
+<li class="li-itemize">The maximum number of logic elements that can fit on the FPGA you used.</li>
+</ul>
+</li>
+</ol><!--CUT END -->
+<p></p>
+<!--HTMLFOOT-->
+<p></p>
+<!--ENDHTML-->
+<p></p>
+<!--FOOTER--><hr size="2" />
+</body>
+</html>
